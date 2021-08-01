@@ -1,4 +1,5 @@
-import { Keypair, TransactionBuilder,Server, Account, Networks, Operation, Asset, Claimant } from "xdb-digitalbits-sdk";
+import {Asset, Claimant, Frontier, Keypair, Networks, Operation, Server, TransactionBuilder} from "xdb-digitalbits-sdk";
+import BalanceLineAsset = Frontier.BalanceLineAsset;
 
 interface TokenServiceResult{
     success : boolean
@@ -23,20 +24,56 @@ export class TokenService{
 
     }
 
-    // /**
-    //  * Mint new tokens. 
-    //  * 
-    //  * Note that the token should allready be created.
-    //  * 
-    //  * @param tokenId Token identifier.
-    //  * @param amount amount of tokens to issue.
-    //  */
-    // async mintToken(tokenId:string, amount:string){
-        
-    // }
+    /**
+     * Mint new tokens.
+     *
+     * Note that the token should already be created.
+     *
+     * @param userId user identifier
+     * @param tokenId Token identifier.
+     * @param amount amount of tokens to issue.
+     */
+    async mintToken(userId: string,tokenId:string, amount:string){
+        const baseFee = await this.server.fetchBaseFee()
+
+        const [tokenKeypair,distributionKeypair] = await this.getKeyPairsForUserId(userId)
+
+        const account = await this.server.loadAccount(distributionKeypair.publicKey())
+        const asset = new Asset(tokenId,tokenKeypair.publicKey())
+
+        const createTokenTx = new TransactionBuilder(account,{fee: baseFee.toString(), networkPassphrase: this.network})
+            .addOperation(
+                Operation.payment({
+                    asset,
+                    amount: amount,
+                    destination: distributionKeypair.publicKey(),
+                    source: tokenKeypair.publicKey()
+                })
+            )
+            .setTimeout(0)
+            .build()
+
+        createTokenTx.sign(tokenKeypair,distributionKeypair)
+
+        const serverRes = await this.server.submitTransaction(createTokenTx).catch(err =>{return err})
+
+        let result : TokenServiceResult
+        if(!serverRes.successful){
+            result = {
+                success : false,
+                error: serverRes
+            }
+        }else{
+            result = {
+                success : true,
+                txhash : serverRes.hash
+            }
+        }
+        return result
+    }
 
     /**
-     * 
+     * Todo : use object as return type, arrays are so error prone.
      * @param userId user to get keypairs for
      * @returns [tokenKeypair, distributionKeypair]
      */
@@ -103,7 +140,7 @@ export class TokenService{
      * @param tokenId Short token identifier. Up to 12 characters.
      * @param recipients array of typles to indicate the recipients and the amount to send them individually.
      */
-    async payWithClaimableBalances(userId: string, tokenId: string, recipients: Array<{address: string, amount: string}>) : Promise<TokenServiceResult>{
+    async payWithClaimableBalances(userId: string, tokenId: string, recipients: {address: string, amount: string}[]) : Promise<TokenServiceResult>{
         const baseFee = await this.server.fetchBaseFee()
         
         const [tokenKeypair,distributionKeypair] = await this.getKeyPairsForUserId(userId)
@@ -127,7 +164,7 @@ export class TokenService{
 
         tx.sign(distributionKeypair)
 
-        const response = await this.server.submitTransaction(tx).catch((err)=> {return err})
+        const response = await this.server.submitTransaction(tx).catch(err=> {return err})
 
         if(response.successful){
             return {
@@ -148,7 +185,7 @@ export class TokenService{
      * @param tokenId Short token identifier. Up to 12 characters.
      * @param recipients array of typles to indicate the recipients and the amount to send them individually.
      */
-     async payWithPayment(userId: string, tokenId: string, recipients: Array<{address: string, amount: string}>): Promise<TokenServiceResult>{
+     async payWithPayment(userId: string, tokenId: string, recipients: {address: string, amount: string}[]): Promise<TokenServiceResult>{
         const baseFee = await this.server.fetchBaseFee()
 
         const [tokenKeypair,distributionKeypair] = await this.getKeyPairsForUserId(userId)
@@ -171,7 +208,7 @@ export class TokenService{
         const tx = txBuilder.setTimeout(0).build()
 
         tx.sign(distributionKeypair)
-        const response = await this.server.submitTransaction(tx).catch((err)=> {return err})
+        const response = await this.server.submitTransaction(tx).catch(err=> {return err})
 
         if(response.successful){
             return {
@@ -184,5 +221,22 @@ export class TokenService{
                 error: response
             }
         } 
+    }
+
+    /**
+     * list the tokens the user has created.
+     * todo : use db
+     */
+    async listTokens(userId: string) : Promise<{ tokenId: string,balance: string }[]> {
+        const [,distributionKeypair] = await this.getKeyPairsForUserId(userId)
+
+        const balances = await this.server.accounts().accountId(distributionKeypair.publicKey()).call()
+
+        return balances.balances.filter(balance => balance.asset_type != "native").map(balance => {
+            return {
+                tokenId: (balance as BalanceLineAsset).asset_code,
+                balance: (balance as BalanceLineAsset).balance
+            }
+        })
     }
 }

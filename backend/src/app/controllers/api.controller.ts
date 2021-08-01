@@ -1,6 +1,6 @@
-import { Context, Get, HttpResponseInternalServerError, HttpResponseOK,  HttpResponseServerError, Post } from '@foal/core';
-import { Server } from 'xdb-digitalbits-sdk';
-import { TokenService } from '../services/TokenService';
+import { Context, Get, HttpResponseInternalServerError, HttpResponseOK,  Post } from "@foal/core";
+import { Server } from "xdb-digitalbits-sdk";
+import { TokenService } from "../services/TokenService";
 
 export class ApiController {
   server = new Server("https://frontier.testnet.digitalbits.io")
@@ -21,6 +21,21 @@ export class ApiController {
       return new HttpResponseInternalServerError(issueTokenRes.error)
     }
   }
+
+  /**
+   * Create a new token.
+   */
+  @Post("/mint")
+  async mintToken(ctx: Context){
+    const body = ctx.request.body
+    const issueTokenRes = await this.tokenService.mintToken("",body.tokenId,body.amount)
+    if(issueTokenRes.success){
+      return new HttpResponseOK()
+    }else{
+      return new HttpResponseInternalServerError(issueTokenRes.error)
+    }
+  }
+
 
   /**
    * Create a claimable balance for the specified user.
@@ -61,6 +76,14 @@ export class ApiController {
       tokenAccount : this.tokenService.tokenKeypair.publicKey(),
       distributionAccount : this.tokenService.distributionKeypair.publicKey()
     })
+  }
+
+  /**
+   * get tokens issues by us. 
+   */
+  @Get("/")
+  async tokensInfo(){
+    return new HttpResponseOK(await this.tokenService.listTokens(""))
   }
 
 }
