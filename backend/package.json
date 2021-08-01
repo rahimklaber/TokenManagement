@@ -25,13 +25,16 @@
   },
   "dependencies": {
     "@foal/core": "^2.0.0",
+    "@foal/jwt": "^2.5.0",
     "@foal/typeorm": "^2.0.0",
     "better-sqlite3": "^7.4.3",
+    "jsonwebtoken": "^8.5.1",
     "source-map-support": "~0.5.19",
     "typeorm": "0.2.26",
     "xdb-digitalbits-sdk": "^8.2.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.4",
     "@types/mocha": "7.0.2",
     "@types/node": "10.17.24",
     "@typescript-eslint/eslint-plugin": "^4.28.5",

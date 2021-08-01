@@ -1,6 +1,14 @@
 {
   "settings": {
     "debug": true,
-    "loggerFormat": "dev"
+    "loggerFormat": "dev",
+    "jwt": {
+      "secret": "tzOLY/0CEZKqnyU2Nw27yUNfbqSLv5oyp23tfMVeopQ=",
+      "secretEncoding": "base64"
+    }
+  },
+  "database": {
+    "type": "better-sqlite3",
+    "database": "./db.sqlite3"
   }
 }

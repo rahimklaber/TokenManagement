@@ -1,5 +1,6 @@
 import {Asset, Claimant, Frontier, Keypair, Networks, Operation, Server, TransactionBuilder} from "xdb-digitalbits-sdk";
 import BalanceLineAsset = Frontier.BalanceLineAsset;
+import {User} from "../entities";
 
 interface TokenServiceResult{
     success : boolean
@@ -11,10 +12,7 @@ interface TokenServiceResult{
 export class TokenService{
     server: Server
     network: Networks
-    // issuer keypair
-    tokenKeypair = Keypair.fromSecret("SAR56VOVHXC7ZINANV2T6XVL4RMP2VBODJCLS5VLCUEMCMDJ7ZSAPPVJ") // todo
-    distributionKeypair = Keypair.fromSecret("SDKUNHTR63H3NEYA2HBXS42GCFT64PIIBDM2FW5B77RMMT3S5PAOEXH3") // todo
-    
+
 
     constructor(server: Server, network : Networks = Networks.TESTNET ){
         this.server = server
@@ -78,7 +76,9 @@ export class TokenService{
      * @returns [tokenKeypair, distributionKeypair]
      */
     async getKeyPairsForUserId(userId:string) : Promise<[Keypair, Keypair]>{
-        return [this.tokenKeypair,this.distributionKeypair]
+        const user = await User.findOne({username: userId})
+        console.log(user)
+        return [Keypair.fromSecret(user?.tokenAccountSecret as string),Keypair.fromSecret(user?.distributionAccountSecret as string)]
     }
 
 
