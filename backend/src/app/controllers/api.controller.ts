@@ -21,6 +21,7 @@ export class ApiController {
   @Post("/new")
   async createNewToken(ctx: Context){
     const body = ctx.request.body
+    console.log(body)
     const issueTokenRes = await this.tokenService.issueToken(ctx.user.username,body.tokenId,body.tokenName,"","",body.amount)
     if(issueTokenRes.success){
       return new HttpResponseOK()

@@ -28,6 +28,7 @@ export class RemoteSerive{
         }
         const response = await axios.post(`${this.serviceUrl}/auth/login`,body)
         this.token = response.data.jwtToken
+        console.log(this.token)
     }
 
     async register(username: string, password: string){
@@ -72,7 +73,10 @@ export class RemoteSerive{
             amount : initialAmount,
             imageUrl
         }
-        const response = await axios.post(`${this.serviceUrl}/token/new`,config)
+
+        console.log(this.token)
+
+        const response = await axios.post(`${this.serviceUrl}/token/new`,data,config)
 
     }
 

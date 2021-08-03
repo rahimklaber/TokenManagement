@@ -7,11 +7,11 @@ import {Button} from "@material-ui/core";
 import {Register} from "./components/Register"
 import { Login } from './components/Login';
 import { Tokens } from './components/Tokens';
-import {IssueToken} from "./components/IssueTokens";
+import {IssueTokens} from "./components/IssueTokens";
 // @ts-ignore
 window.text = RemoteSerive
 function App() {
-    const service = new RemoteSerive("http://localhost:3001")
+    const [service,setService] = useState(new RemoteSerive("http://localhost:3001"))
     const [tokens,setTokens] = useState([{tokenId: "", balance: ""}])
 
     const loadTokens = () => {service.getAllTokens().then(res=>setTokens(res));return }
@@ -32,7 +32,10 @@ function App() {
                         }}/>
                       </Route>
                       <Route path="/issue">
-                        <IssueToken/>
+                        <IssueTokens  issueTokenProxy={async (tokenId, tokenName, amount, imageUrl) =>{
+                            await service.createNewToken(tokenId,tokenName,imageUrl,amount)
+                            loadTokens()
+                        }}/>
                       </Route>
                       <Route path="/distribute">
 

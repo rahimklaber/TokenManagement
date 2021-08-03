@@ -22,32 +22,30 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-interface IssueTokenProps{
+interface DistributeTokensProxy{
     issueTokenProxy : (tokenId: string, tokenName: string, amount: string, imageUrl : string) => void
 }
 
-export function IssueTokens(props: IssueTokenProps) {
+export function DistributeTokens(props: DistributeTokensProxy) {
     const classes = useStyles();
     const history = useHistory()
 
-    const [tokenId, setTokenId] = useState("")
-    const [tokenName, setTokenName] = useState("")
+    const [recipient,setRecipient] = useState("")
+    const [token, setToken] = useState("")
     const [amount, setAmount] = useState("")
-    const [imageUrl, setImageUrl] = useState("")
 
     return (
         <div>
             <h2 className={classes.title}>
-                Create new tokens
+                Distribute Tokens
             </h2>
 
             <Paper className={classes.form}>
-                <TextField label="Token id" required value={tokenId} onChange={(event) => setTokenId(event.target.value)}/>
+                <TextField label="Recipient" required value={tokenId} onChange={(event) => setTokenId(event.target.value)}/>
                 <TextField label="Token name" required  value={tokenName} onChange={(event) => setTokenName(event.target.value)}/>
                 <TextField label="Amount to mint" required value={amount} onChange={(event) => setAmount(event.target.value)}/>
-                <TextField label="image Url" value={imageUrl} onChange={(event) => setImageUrl(event.target.value)}/>
                 <Button color="primary" variant="contained" onClick={() => {props.issueTokenProxy(tokenId,tokenName,amount,imageUrl)
-                history.push("/manage")
+                    history.push("/manage")
                 }}>
                     Create token
                 </Button>
