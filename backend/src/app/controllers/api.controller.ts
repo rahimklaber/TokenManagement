@@ -22,7 +22,7 @@ export class ApiController {
   async createNewToken(ctx: Context){
     const body = ctx.request.body
     console.log(body)
-    const issueTokenRes = await this.tokenService.issueToken(ctx.user.username,body.tokenId,body.tokenName,"","",body.amount)
+    const issueTokenRes = await this.tokenService.issueToken(ctx.user.username,body.tokenId,body.amount)
     if(issueTokenRes.success){
       return new HttpResponseOK()
     }else{

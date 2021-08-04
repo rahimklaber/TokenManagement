@@ -91,7 +91,7 @@ export class TokenService{
      * @param description Extra info about the token.
      * @param initialAmount Initial amount to mint. todo
      */
-    async issueToken(userId:string, tokenId: string, tokenName: string, imageUrl: string, description: string, initialAmount: string) : Promise<TokenServiceResult>{
+    async issueToken(userId:string, tokenId: string, initialAmount: string) : Promise<TokenServiceResult>{
         const baseFee = await this.server.fetchBaseFee()
 
         const [tokenKeypair,distributionKeypair] = await this.getKeyPairsForUserId(userId)
@@ -227,14 +227,15 @@ export class TokenService{
      * list the tokens the user has created.
      * todo : use db
      */
-    async listTokens(userId: string) : Promise<{ tokenId: string,balance: string }[]> {
-        const [,distributionKeypair] = await this.getKeyPairsForUserId(userId)
+    async listTokens(userId: string) : Promise<{ tokenId: string, issuer: string, balance: string }[]> {
+        const [issuer,distributionKeypair] = await this.getKeyPairsForUserId(userId)
 
         const balances = await this.server.accounts().accountId(distributionKeypair.publicKey()).call()
 
         return balances.balances.filter(balance => balance.asset_type != "native").map(balance => {
             return {
                 tokenId: (balance as BalanceLineAsset).asset_code,
+                issuer: issuer.publicKey(),
                 balance: (balance as BalanceLineAsset).balance
             }
         })
