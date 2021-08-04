@@ -12,8 +12,8 @@ Before doing anything you need an api key.
 Make a post request to `/auth/register` and provide a username and password as follows:
 ```json
 {
-	username : "username you want",
-	password : "password you want"
+	"username" : "username you want",
+	"password" : "password you want"
 }
 ```
 
@@ -35,8 +35,8 @@ By making a `post` request to the `/tokens/new` endpoint, a new token can be cre
 the following should be provided in the request body:
 ```json
 {
-	tokenId : "token identifier"
-	amount : "initial amount to mint"
+	"tokenId" : "token identifier"
+	"amount" : "initial amount to mint"
 }
 ```
 
@@ -46,8 +46,8 @@ After a token has been created more can be minted by making a post request to th
 the following should be provided in the request body:
 ```json
 {
-	tokenId : "token identifier"
-	amount : "amount to mint"
+	"tokenId" : "token identifier"
+	"amount" : "amount to mint"
 }
 ```
 
@@ -63,12 +63,12 @@ Second, if users allready have a trustline to the asset they can be paid with a 
 In both cases, following should be provided in the request body:
 ```json
 {
-	tokenId : "test",
-	recipients: 
+	"tokenId" : "test",
+	"recipients": 
 	[
 		{
-		 address:"address to pay",
-		 amount: "10" 
+		 "address":"address to pay",
+		 "amount" : "10" 
 		}
 	]
 }
