@@ -1,6 +1,6 @@
 # Tokens as a service
 
-This application provides an abstraction to do some basic things with tokens.
+This application provides an abstraction to do some operatiosn with tokens.
 
 ## Features
 This application provides the ability to do the following things.
