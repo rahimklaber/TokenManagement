@@ -3,6 +3,8 @@
 This application provides an abstraction to do some operations with tokens, without touching private keys.
 Instead all you need to do is call a simple api.
 
+The api is available at this address: https://serene-sands-71811.herokuapp.com/
+
 ## Features
 This application provides the ability to do the following things.
 
