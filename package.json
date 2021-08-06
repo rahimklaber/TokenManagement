@@ -31,10 +31,10 @@
     "jsonwebtoken": "^8.5.1",
     "source-map-support": "~0.5.19",
     "typeorm": "0.2.26",
-    "@foal/cli": "^2.5.0",
     "xdb-digitalbits-sdk": "^8.2.2"
   },
   "devDependencies": {
+    "@foal/cli": "^2.5.0",
     "@types/jsonwebtoken": "^8.5.4",
     "@types/mocha": "7.0.2",
     "@types/node": "10.17.24",
